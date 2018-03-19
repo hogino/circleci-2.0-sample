@@ -1,0 +1,49 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/ruby:2.4-node
+    machine: true
+    steps:
+      - checkout
+      - run:
+          name: first
+          command: echo first
+
+  approve:
+    working_directory: ~/repo
+    machine: true
+    steps:
+      - run:
+          name: noope
+          command: echo noope
+
+  deploy:
+    working_directory: ~/repo
+    machine: true
+    steps:
+      - run:
+          name: deploy
+          command: echo deploy
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build
+      - approve:
+          type: approval
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+      - deploy:
+          requires:
+            - approve
+          filters:
+            branches:
+              only: master
+
+              
